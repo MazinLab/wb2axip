@@ -302,8 +302,8 @@ module	axis2mm #(
 		output	wire					S_AXIS_TREADY,
 		input	wire	[C_AXI_DATA_WIDTH-1:0]		S_AXIS_TDATA,
 		input	wire					S_AXIS_TLAST,
-		input wire [((C_AXIS_TUSER_WIDTH>0) ? C_AXIS_TUSER_WIDTH-1:0):0]
-								S_AXIS_TUSER,
+//		input wire [((C_AXIS_TUSER_WIDTH>0) ? C_AXIS_TUSER_WIDTH-1:0):0]
+//								S_AXIS_TUSER,
 		// }}}
 		//
 		// The control interface
@@ -354,8 +354,9 @@ module	axis2mm #(
 		output	wire	[C_AXI_DATA_WIDTH-1:0]	M_AXI_WDATA,
 		output	wire	[C_AXI_DATA_WIDTH/8-1:0] M_AXI_WSTRB,
 		output	wire				M_AXI_WLAST,
-		output wire [(C_AXIS_TUSER_WIDTH>0 ? C_AXIS_TUSER_WIDTH-1:0):0]
-							M_AXI_WUSER,
+//		output wire [(C_AXIS_TUSER_WIDTH>0 ? C_AXIS_TUSER_WIDTH-1:0):0]
+//							M_AXI_WUSER,
+
 		//
 		input	wire				M_AXI_BVALID,
 		output	wire				M_AXI_BREADY,
@@ -405,6 +406,8 @@ module	axis2mm #(
 
 	// Signal declarations
 	// {{{
+    wire [0:0] S_AXIS_TUSER=0;
+    wire [0:0] M_AXI_WUSER;
 	wire	clk_active, gated_clk;
 	wire	i_clk   =  gated_clk;
 	wire	i_reset = !S_AXI_ARESETN;
