@@ -216,10 +216,10 @@ module	axis2mm #(
 		// Downstream AXI (MM) address width.  Remember, this is *byte*
 		// oriented, so an address width of 32 means this core can
 		// interact with a full 2^(C_AXI_ADDR_WIDTH) *bytes*.
-		parameter	C_AXI_ADDR_WIDTH = 32,
+		parameter	C_AXI_ADDR_WIDTH = 36,
 		// ... and the downstream AXI (MM) data width.  High speed can
 		// be achieved by increasing this data width.
-		parameter	C_AXI_DATA_WIDTH = 32,
+		parameter	C_AXI_DATA_WIDTH = 512,
 		parameter	C_AXI_ID_WIDTH = 1,
 		parameter	C_AXIS_TUSER_WIDTH = 0,
 		//
@@ -283,7 +283,7 @@ module	axis2mm #(
 		// FIFO to use distributed RAM.  For those architectures that
 		// don't have distributed RAM, or those designs that need to
 		// use block RAM, this flag should be set to zero.
-		parameter	[0:0]	OPT_ASYNCMEM  = 1'b1,
+		parameter	[0:0]	OPT_ASYNCMEM  = 1'b0,
 		//
 		// Size of the AXI-lite bus.  These are fixed, since 1) AXI-lite
 		// is fixed at a width of 32-bits by Xilinx def'n, and 2) since
