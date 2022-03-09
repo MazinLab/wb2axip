@@ -210,6 +210,9 @@
 //
 `default_nettype none
 // }}}
+
+
+
 module	axis2mm #(
 		// {{{
 		//
@@ -227,7 +230,7 @@ module	axis2mm #(
 		// AXI stream interface and the outgoing AXI stream ready.  This
 		// is technically necessary, and probably good practice too,
 		// when dealing with high speed networks.
-		parameter [0:0]	OPT_AXIS_SKIDBUFFER = 1,
+		parameter [0:0]	OPT_AXIS_SKIDBUFFER = 0,
 		//
 		// OPT_AXIS_SKIDREGISTER will force the outputs of the skid
 		// buffer to be registered.  This is something you would
@@ -293,7 +296,21 @@ module	axis2mm #(
 		// }}}
 	) (
 		// {{{
+		
+// Declare the attributes above the port declaration
+(* X_INTERFACE_INFO = "xilinx.com:signal:clock:1.0 S_AXI_ACLK CLK" *)
+// Supported parameters: ASSOCIATED_CLKEN, ASSOCIATED_RESET, ASSOCIATED_ASYNC_RESET, ASSOCIATED_BUSIF, CLK_DOMAIN, PHASE, FREQ_HZ
+// Most of these parameters are optional.  However, when using AXI, at least one clock must be associated to the AXI interface.
+// Use the axi interface name for ASSOCIATED_BUSIF, if there are multiple interfaces, separate each name by ':'
+// Use the port name for ASSOCIATED_RESET.
+// Output clocks will require FREQ_HZ to be set (note the value is in HZ and an integer is expected).
+(* X_INTERFACE_PARAMETER = "ASSOCIATED_BUSIF S_AXIS:S_AXIL:M_AXI, ASSOCIATED_RESET S_AXI_ARESETN, FREQ_HZ 256000000" *)
 		input	wire					S_AXI_ACLK,
+// Declare the attributes above the port declaration
+(* X_INTERFACE_INFO = "xilinx.com:signal:reset:1.0 S_AXI_ARESETN RST" *)
+//// Supported parameter: POLARITY {ACTIVE_LOW, ACTIVE_HIGH}
+//// Normally active low is assumed.  Use this parameter to force the level
+//(* X_INTERFACE_PARAMETER = "POLARITY ACTIVE_HIGH" *)
 		input	wire					S_AXI_ARESETN,
 		//
 		// The stream interface
@@ -366,6 +383,10 @@ module	axis2mm #(
 		//
 		//
 		// Create an output signal to indicate that we've finished
+(* X_INTERFACE_INFO = "xilinx.com:signal:interrupt:1.0 o_int INTERRUPT" *)
+// Supported parameter: SENSITIVITY { LEVEL_HIGH, LEVEL_LOW, EDGE_RISING, EDGE_FALLING }
+// Normally LEVEL_HIGH is assumed.  Use this parameter to force the level
+(* X_INTERFACE_PARAMETER = "SENSITIVITY EDGE_RISING" *)
 		output	reg				o_int
 		// }}}
 	);
