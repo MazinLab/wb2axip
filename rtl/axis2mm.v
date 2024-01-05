@@ -380,6 +380,9 @@ module	axis2mm #(
 		input	wire	[C_AXI_ID_WIDTH-1:0]	M_AXI_BID,
 		input	wire	[1:0]			M_AXI_BRESP,
 		// }}}
+		input	wire	[31:0]			secs_in,
+		input	wire	[31:0]			ns_in,
+		input	wire	[7:0]			subns_in,
 		//
 		//
 		// Create an output signal to indicate that we've finished
@@ -396,9 +399,9 @@ module	axis2mm #(
 	localparam	AXILLSB = $clog2(C_AXIL_DATA_WIDTH)-3;
 	localparam	ADDRLSB = $clog2(C_AXI_DATA_WIDTH)-3;
 	localparam [2:0]	CMD_CONTROL   = 3'b000,
-				// CMD_UNUSED_1  = 3'b001,
-				// CMD_UNUSED_2  = 3'b010,
-				// CMD_UNUSED_3  = 3'b011,
+				CMD_SECS      = 3'b001,
+				CMD_NS        = 3'b010,
+				CMD_SUBNS     = 3'b011,
 				CMD_ADDRLO    = 3'b100,
 				CMD_ADDRHI    = 3'b101,
 				CMD_LENLO     = 3'b110,
@@ -512,6 +515,10 @@ module	axis2mm #(
 				aw_needs_alignment;
 	reg	[LGFIFO:0]	data_available;
 	reg			sufficiently_filled;
+
+	reg	[31:0]		cap_secs;
+	reg	[31:0]		cap_ns;
+	reg	[7:0]		cap_subns;
 
 
 	// }}}
@@ -767,8 +774,14 @@ module	axis2mm #(
 	end else if (!r_busy)
 	begin
 		// Core is idle, waiting for a command to start
-		if (w_cmd_start)
+		if (w_cmd_start) begin
+			// TODO: Time the actual arival time of the first
+			// sample written
+			cap_secs <= secs_in;
+			cap_ns <= ns_in;
+			cap_subns <= subns_in;
 			r_busy <= 1'b1;
+		end
 
 		// Any write to the control register will clear the
 		// completion flag
@@ -1044,6 +1057,9 @@ module	axis2mm #(
 	begin
 		case(arskd_addr)
 		CMD_CONTROL: axil_read_data <= w_status_word;
+		CMD_SECS: axil_read_data <= cap_secs;
+		CMD_NS: axil_read_data <= cap_ns;
+		CMD_SUBNS: axil_read_data <= {24'b0, cap_subns};
 		CMD_ADDRLO: begin
 			if (!r_busy)
 				axil_read_data <= wide_address[C_AXIL_DATA_WIDTH-1:0];
